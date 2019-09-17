@@ -20,14 +20,3 @@ public interface WebsiteMapper {
     public void deleteWebsiteById(Integer id);
     
 }
-
-
-
-
-
-
-
-
-
-
-

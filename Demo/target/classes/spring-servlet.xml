@@ -13,7 +13,28 @@
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"></context:include-filter>
     </context:component-scan>
     
-    <mvc:annotation-driven></mvc:annotation-driven>
+    <!--在Spring MVC中集成Fastjson-->
+    <!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter" />      
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <!--
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            
+            <bean id="fastJsonHttpMessageConverter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    -->
+
     <mvc:default-servlet-handler/>
     
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

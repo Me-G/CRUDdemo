@@ -217,6 +217,14 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
+        
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.60</version>
+        </dependency>
+
+        
     </dependencies>
 
     <build>
@@ -270,6 +278,7 @@
     </build>
 
 </project>
+
 
 
 

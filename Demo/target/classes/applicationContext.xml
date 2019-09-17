@@ -41,7 +41,15 @@
     
     <!--shiro配置-->
     <!-- security datasource: -->
-    <bean id="myRealm" class="com.mydemo.demo.realm.MyRealm"></bean>
+    <bean id="myRealm" class="com.mydemo.demo.realm.MyRealm">
+        <!--
+        <property name="credentialsMatcher" >
+            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <property name="hashAlgorithmName" value="MD5"></property>
+            </bean>
+        </property>
+        -->
+    </bean>
     
      <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
         <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
@@ -51,15 +59,17 @@
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager"></property>
         <property name="loginUrl" value="/" ></property> 
-        <property name="successUrl" value="/table"></property>
+            <property name="successUrl" value="/operation"></property>
         <property name="unauthorizedUrl" value="/unauthorized"></property>
         <property name="filterChainDefinitions">
             <value>
                 # some example chain definitions:
                 #/admin/** = authc, roles[admin]
                 #/docs/** = authc, perms[document:read]
+                /bootstraptable = authc
+                /logout = logout
+                #/** = authc
                 / = anon
-                /** = authc
                 # more URL-to-FilterChain definitions here
             </value>
         </property>

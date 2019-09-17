@@ -15,11 +15,11 @@
         
         <h1>Hello World!</h1>
         <a href="operation">操作页面</a><br/>
-        <a href="table">BootStrap Table</a>
+        <a href="bootstraptable">BootStrap Table</a>
         
         <br/><br/>
         <h1>Hello World!</h1><br/>
-        <form:form action="table" method="POST">
+        <form:form action="tableView" method="POST">
             Username:<input type="text" name="username"/><br/>
             Password:<input type="password" name="password"/><br/>
             <input type="submit" value="登录"/>
