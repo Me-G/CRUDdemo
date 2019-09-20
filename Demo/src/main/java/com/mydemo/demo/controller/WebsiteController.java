@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -35,8 +36,6 @@ public class WebsiteController {
     public ModelAndView queryAll(ModelAndView mv) {
         logger.info("=========>未登录");
         List<Website> websites = websiteService.getAllWebsites();
-//        JSON json = (JSON) JSONArray.toJSON(websites);
-//        System.out.println("JSON:"+json.toString());
         mv.setViewName("operation");
         mv.addObject("allwebsites", websites);
         return mv;
@@ -44,12 +43,39 @@ public class WebsiteController {
 
     @RequestMapping(value = "/tableData", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public List<Website> tableData(ModelAndView mv) {
+    public List<Website> tableData() {
         List<Website> websites = websiteService.getAllWebsites();
-//        JSON json = (JSON) JSONArray.toJSON(websites);
-//        mv.setViewName("bootstraptable");
-//        mv.addObject("allwebsitesjson", websites);
         return websites;
+    }
+
+    @RequestMapping(value = "/updateORinsert", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public Website updateORinsert(@RequestBody Website website) {
+        System.out.println(website);
+        if (website.getId() == 0) {
+            if (website.getName() != null || website.getRemark() != null || website.getRemark() != null) {
+                websiteService.insertWebsite(website);
+            } else {
+                return null;
+            }
+        } else {
+            websiteService.updateWebsite(website);
+        }
+        return website;
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST, produces = "text/xml;charset=UTF-8")
+    @ResponseBody
+    public Boolean delete(@RequestBody String[] ids) {
+        if (ids.length == 0) {
+            return false;
+        } else {
+            for (String id : ids) {
+                System.out.println(Integer.parseInt(id));
+                websiteService.deleteWebsiteById(Integer.parseInt(id));
+            }
+        }
+        return true;
     }
 
     @RequestMapping(value = "/bootstraptable", method = RequestMethod.GET)
@@ -112,4 +138,11 @@ public class WebsiteController {
     }
 
 }
+
+
+
+
+
+
+
 

@@ -299,3 +299,96 @@ $(function () {
 //    initTable();
 //    $('#locale').change(initTable);
 //});
+
+
+
+
+
+
+ //可显示数据的代码
+//            var $table = $('#table');
+//
+//            var res = function (request) { //加载服务器数据之前的处理程序，可以用来格式化数据。参数：res为从服务器请求到的数据。
+//                return {
+//                    "rows": request.data.rows,
+//                    "total": request.data.total
+//                };
+//            };
+//
+//            function initTable() {
+//                $table.bootstrapTable('destroy').bootstrapTable({
+//
+//                    ajax: function (res) {
+//
+//                        $.ajax({
+//                            type: "GET",
+//                            url: "tableData",
+//                            contentType: "application/json;charset=utf-8",
+//                            dataType: "json",
+//
+//                            success: function (msg) {
+//                                res.success({
+//                                    row: msg
+//                                });
+//                                $table.bootstrapTable('load', msg);
+//                            },
+//                            error: function () {
+//                                alert("错误");
+//                            }
+//                        });
+//                    },
+//                    height: 550,
+//                    locale: $('#locale').val(),
+//                    columns: [
+//                        [{
+//                                field: 'state',
+//                                checkbox: true,
+//                                rowspan: 2,
+//                                align: 'center',
+//                                valign: 'middle'
+//                            }, {
+//                                title: 'ID',
+//                                field: 'id',
+//                                rowspan: 2,
+//                                align: 'center',
+//                                valign: 'middle',
+//                                sortable: true
+//                                        //                    footerFormatter: totalTextFormatter
+//                            }, {
+//                                title: 'Detail',
+//                                colspan: 4,
+//                                align: 'center'
+//                            }],
+//                        [{
+//                                field: 'name',
+//                                title: 'Name',
+//                                sortable: true,
+//                                //                    footerFormatter: totalNameFormatter,
+//                                align: 'center'
+//                            }, {
+//                                field: 'value',
+//                                title: 'Value',
+//                                sortable: true,
+//                                align: 'center'
+//                                        //                    footerFormatter: totalPriceFormatter
+//                            }, {
+//                                field: 'remark',
+//                                title: 'Remark',
+//                                sortable: true,
+//                                align: 'center'
+//                                        //                    footerFormatter: totalPriceFormatter
+//                            }, {
+//                                field: 'operate',
+//                                title: 'Operate',
+//                                align: 'center',
+//                                clickToSelect: false
+////                                events: window.operateEvents,
+////                                formatter: operateFormatter
+//                            }]
+//                    ]
+//                });
+//            }
+//
+//            $(function () {
+//                initTable();
+//            });

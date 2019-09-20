@@ -20,8 +20,10 @@
         <script src="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.js"></script>
         <script src="https://cdn.bootcss.com/bootstrap-table/1.15.4/locale/bootstrap-table-zh-CN.min.js"></script>
         <script src="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table-locale-all.min.js"></script>
-        
-        
+
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+        <script src="https://cdn.bootcss.com/bootstrap-table/1.15.4/extensions/editable/bootstrap-table-editable.min.js"></script>
 
         <!--对于Bootstrap v4，使用Font Awesome作为默认图标，因此需要导入Font Awesome链接。-->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
@@ -35,16 +37,25 @@
             #locale {
                 width: 100%;
             }
-            .like {
-                margin-right: 10px;
+            /*            .save {
+                            margin-right: 10px;
+                        }*/
+            .glyphicon-ok::before {
+                content: "\f00c";
+            }
+            .glyphicon-remove::before {
+                content: "\f00d";
+            }
+            .glyphicon {
+                font-family: 'Font Awesome 5 Free';
+                font-weight: 900;
+                font-style: normal;
             }
         </style>
 
     </head>
 
     <body>
-        <h1>Table</h1>
-        <br/>
         <div class="select">
             <select class="form-control" id="locale">
                 <option value="af-ZA">af-ZA</option>
@@ -101,9 +112,14 @@
             <button id="remove" class="btn btn-danger" disabled>
                 <i class="glyphicon glyphicon-remove"></i> Delete
             </button>
+
+            <button id="insert" class="btn btn-danger">
+                <i class="fas fa-plus"></i> 插入
+            </button>
         </div>
         <table
             id="table"
+            data-toggle="table"
             data-toolbar="#toolbar"
             data-search="true"
             data-show-refresh="true"
@@ -119,23 +135,29 @@
             data-pagination="true"
             data-id-field="id"
             data-page-list="[10, 25, 50, 100, all]"
-            data-show-footer="true"
+            data-show-footer="false"
             data-side-pagination="server"
-            data-url="tableData">
-            <!--data-response-handler="responseHandler"-->
-
+            data-cache="false" 
+            data-response-handler="responseHandler">
         </table>
 
 
         <script>
             var $table = $('#table');
             var $remove = $('#remove');
+            var $insert = $('#insert');
             var selections = [];
-
             function getIdSelections() {
                 return $.map($table.bootstrapTable('getSelections'), function (row) {
                     return row.id;
                 });
+            }
+
+            function responseHandler(res) {
+                $.each(res.rows, function (i, row) {
+                    row.state = $.inArray(row.id, selections) !== -1;
+                });
+                return res;
             }
 
             function detailFormatter(index, row) {
@@ -145,51 +167,83 @@
                 });
                 return html.join('');
             }
-
-            function operateFormatter(value, row, index) {
-                return [
-                    '<a class="edit" href="javascript:void(0)" title="Edit">',
-                    '<i class="fas fa-edit"></i>',
-                    '</a>  ',
-                    '<a class="remove" href="javascript:void(0)" title="Remove">',
-                    '<i class="fa fa-trash"></i>',
-                    '</a>'
-                ].join('');
-            }
             
-            function insertFormatter() {
+            //保存图标
+            function saveFormatter(value, row, index) {
                 return [
-                    '<a class="insert" href="javascript:void(0)" title="Insert">',
-                    '<i class="fas fa-edit"></i>',
-                    '</a>  '
-                ].join('');
+                    '<a id="save" href="javascript:void(0)" class="save" title="Save"><i class="far fa-save"></i></a>'
+                ].join("");
             }
-
-            window.operateEvents = {
-//                'click .edit': function (e, value, row, index) {
-//                    $element.attr('contenteditable', true);
-                    'click .edit': function (e, value, row, index) {
-                    alert('You click edit action, row: ' + JSON.stringify(row));
-                     
-                },
-                'click .remove': function (e, value, row, index) {
-                    $table.bootstrapTable('remove', {
-                        field: 'id',
-                        values: [row.id]
+            //更新或者插入数据
+            window.saveEvents = {
+                'click .save': function (e, value, row, index) {
+                    $.ajax({
+                        type: "POST",
+                        url: "updateORinsert",
+                        contentType: "application/json;charset=utf-8",
+                        /* 特别需要注意这里，需要现将json数组通过JSON.stringify()处理一下之后，才能作为我们需要的参数传过去*/
+                        data: JSON.stringify(row),
+                        dataType: 'json',
+                        message: function () {
+                            alert('data: ' + JSON.stringify(row));
+                        },
+                        success: function (data, status) {
+                            if (status === "success") {
+                                $table.bootstrapTable('refresh'); //确保前端界面与数据库一
+                            }
+                        },
+                        error: function () {
+                            $table.bootstrapTable('refresh'); //确保前端界面与数据库一
+                            alert('编辑失败');
+                        },
+                        complete: function () {
+                        }
                     });
                 }
             };
-
+            //删除图标
+            function deleteFormatter(value, row, index) {
+                return [
+                    '<a id="delete" class="delete" href="javascript:void(0)" title="Delete"><i class="fa fa-trash"></i></a>'
+                ].join("");
+            }
+            //删除数据
+            window.deleteEvents = {
+                'click .delete': function (e, value, row, index) {
+                    var ids = [row.id];
+                    $.ajax({
+                        type: "POST",
+                        url: "delete",
+                        contentType: "text/xml;charset=utf-8",
+                        /* 特别需要注意这里，需要现将json数组通过JSON.stringify()处理一下之后，才能作为我们需要的参数传过去*/
+                        data: JSON.stringify(ids),
+                        traditional: true,
+                        dataType: 'text',
+                        success: function (msg) {
+                            $table.bootstrapTable('refresh'); //确保前端界面与数据库一
+                        },
+                        error: function () {
+                            $table.bootstrapTable('refresh'); //确保前端界面与数据库一
+                            alert('编辑失败');
+                        },
+                        complete: function () {
+                        }
+                    });
+                }
+            };
+            //初始化表格
             function initTable() {
                 $table.bootstrapTable('destroy').bootstrapTable({
+                    cache: false, //是否使用缓存，默认为true
+                    height: 550,
+                    locale: $('#locale').val(),
+                    clickToSelect: true, //是否启用点击选中行
                     ajax: function (request) {
-
-                        $.ajax({
+                        $.ajax({//contentType是传输过去的时候的数据类型，dataType是接收服务器的时候的数据类型
                             type: "GET",
                             url: "tableData",
                             contentType: "application/json;charset=utf-8",
                             dataType: "json",
-
                             success: function (msg) {
                                 request.success({
                                     row: msg
@@ -201,8 +255,6 @@
                             }
                         });
                     },
-                    height: 550,
-                    locale: $('#locale').val(),
                     columns: [
                         [{
                                 field: 'state',
@@ -211,57 +263,82 @@
                                 align: 'center',
                                 valign: 'middle'
                             }, {
-                                title: 'ID',
-                                field: 'id',
-                                rowspan: 2,
-                                align: 'center',
-                                valign: 'middle',
-                                sortable: true
-//                    footerFormatter: totalTextFormatter
-                            }, {
                                 title: 'Detail',
                                 colspan: 4,
                                 align: 'center'
+                            }, {
+                                field: 'operate',
+                                title: 'Operate',
+                                colspan: 3,
+                                align: 'center',
+                                valign: 'middle'
                             }],
                         [{
+                                title: 'ID',
+                                field: 'id',
+                                align: 'center',
+                                valign: 'middle',
+                                sortable: true
+                            }, {
                                 field: 'name',
                                 title: 'Name',
                                 sortable: true,
-//                    footerFormatter: totalNameFormatter,
-                                class:'editable',
+                                editable: {
+                                    type: "text", //编辑框的类型。支持text|textarea|select|date|checklist等
+                                    title: "Name", //编辑框的标题
+                                    disabled: false, //是否禁用编辑
+                                    emptytext: "", //空值的默认文本
+                                    mode: "inline", //编辑框的模式：支持popup和inline两种模式，默认是popup
+                                    validate: function (v) { //字段验证
+                                        if (!$.trim(v)) {
+                                            return '不能为空';
+                                        }
+                                    }
+                                },
                                 align: 'center'
                             }, {
                                 field: 'value',
                                 title: 'Value',
                                 sortable: true,
-                                class:'editable',
+                                editable: {
+                                    type: "text", //编辑框的类型。支持text|textarea|select|date|checklist等
+                                    title: "Value", //编辑框的标题
+                                    disabled: false, //是否禁用编辑
+                                    emptytext: "", //空值的默认文本
+                                    mode: "inline" //编辑框的模式：支持popup和inline两种模式，默认是popup
+                                },
                                 align: 'center'
-//                    footerFormatter: totalPriceFormatter
                             }, {
                                 field: 'remark',
                                 title: 'Remark',
                                 sortable: true,
-                                class:'editable',
+                                editable: {
+                                    type: "text", //编辑框的类型。支持text|textarea|select|date|checklist等
+                                    title: "Remark", //编辑框的标题
+                                    disabled: false, //是否禁用编辑
+                                    emptytext: "", //空值的默认文本
+                                    mode: "inline" //编辑框的模式：支持popup和inline两种模式，默认是popup
+                                },
                                 align: 'center'
-//                    footerFormatter: totalPriceFormatter
                             }, {
-                                field: 'operate',
-                                title: 'Operate',
+                                field: 'saveOperator',
+                                title: 'Save',
                                 align: 'center',
-                                clickToSelect: false,
-                                events: window.operateEvents,
-                                formatter: operateFormatter,
-                                
-                                
-                                footerFormatter: insertFormatter
-                            }]
+                                events: saveEvents,
+                                formatter: saveFormatter
+                            }, {
+                                field: 'deleteOperator',
+                                title: 'Delete',
+                                align: 'center',
+                                events: deleteEvents,
+                                formatter: deleteFormatter
+                            }, {}]
                     ]
                 });
                 $table.on('check.bs.table uncheck.bs.table ' +
                         'check-all.bs.table uncheck-all.bs.table',
                         function () {
                             $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
-
                             // save your data, here just save the current page
                             selections = getIdSelections();
                             // push or splice the selections if you want to save all data selections
@@ -269,13 +346,33 @@
                 $table.on('all.bs.table', function (e, name, args) {
                     console.log(name, args);
                 });
+                //删除多行
                 $remove.click(function () {
                     var ids = getIdSelections();
-                    $table.bootstrapTable('remove', {
-                        field: 'id',
-                        values: ids
+                    $.ajax({
+                        type: "POST",
+                        url: "delete",
+                        contentType: "text/xml;charset=utf-8",
+                        /* 特别需要注意这里，需要现将json数组通过JSON.stringify()处理一下之后，才能作为我们需要的参数传过去*/
+                        data: JSON.stringify(ids),
+                        traditional: true,
+                        dataType: 'text',
+                        success: function (msg) {
+                            $table.bootstrapTable('refresh'); //确保前端界面与数据库一
+                        },
+                        error: function () {
+                            $table.bootstrapTable('refresh'); //确保前端界面与数据库一
+                            alert('编辑失败');
+                        },
+                        complete: function () {
+                        }
                     });
                     $remove.prop('disabled', true);
+                });
+                //插入按钮
+                $insert.click(function () {
+                    var data = {'id': null};
+                    $table.bootstrapTable('prepend', data);
                 });
             }
 
@@ -283,103 +380,6 @@
                 initTable();
                 $('#locale').change(initTable);
             });
-
-
-
-
-
-
-
-
-
-
-            //可显示数据的代码
-//            var $table = $('#table');
-//
-//            var res = function (request) { //加载服务器数据之前的处理程序，可以用来格式化数据。参数：res为从服务器请求到的数据。
-//                return {
-//                    "rows": request.data.rows,
-//                    "total": request.data.total
-//                };
-//            };
-//
-//            function initTable() {
-//                $table.bootstrapTable('destroy').bootstrapTable({
-//
-//                    ajax: function (res) {
-//
-//                        $.ajax({
-//                            type: "GET",
-//                            url: "tableData",
-//                            contentType: "application/json;charset=utf-8",
-//                            dataType: "json",
-//
-//                            success: function (msg) {
-//                                res.success({
-//                                    row: msg
-//                                });
-//                                $table.bootstrapTable('load', msg);
-//                            },
-//                            error: function () {
-//                                alert("错误");
-//                            }
-//                        });
-//                    },
-//                    height: 550,
-//                    locale: $('#locale').val(),
-//                    columns: [
-//                        [{
-//                                field: 'state',
-//                                checkbox: true,
-//                                rowspan: 2,
-//                                align: 'center',
-//                                valign: 'middle'
-//                            }, {
-//                                title: 'ID',
-//                                field: 'id',
-//                                rowspan: 2,
-//                                align: 'center',
-//                                valign: 'middle',
-//                                sortable: true
-//                                        //                    footerFormatter: totalTextFormatter
-//                            }, {
-//                                title: 'Detail',
-//                                colspan: 4,
-//                                align: 'center'
-//                            }],
-//                        [{
-//                                field: 'name',
-//                                title: 'Name',
-//                                sortable: true,
-//                                //                    footerFormatter: totalNameFormatter,
-//                                align: 'center'
-//                            }, {
-//                                field: 'value',
-//                                title: 'Value',
-//                                sortable: true,
-//                                align: 'center'
-//                                        //                    footerFormatter: totalPriceFormatter
-//                            }, {
-//                                field: 'remark',
-//                                title: 'Remark',
-//                                sortable: true,
-//                                align: 'center'
-//                                        //                    footerFormatter: totalPriceFormatter
-//                            }, {
-//                                field: 'operate',
-//                                title: 'Operate',
-//                                align: 'center',
-//                                clickToSelect: false
-////                                events: window.operateEvents,
-////                                formatter: operateFormatter
-//                            }]
-//                    ]
-//                });
-//            }
-//
-//            $(function () {
-//                initTable();
-//            });
 
         </script>
 
