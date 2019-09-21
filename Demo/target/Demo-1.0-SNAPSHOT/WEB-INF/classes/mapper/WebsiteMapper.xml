@@ -30,4 +30,12 @@
     <delete id="deleteWebsiteById">
         delete from weiyidata where id=#{id}
     </delete>
+    
+    <update id="dropColumnID">
+        alter table weiyidata drop id
+    </update>
+    <update id="addColumnID">
+        alter table weiyidata add id int unsigned not null auto_increment first,add primary key (id)
+    </update>
+    
 </mapper>

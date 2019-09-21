@@ -190,10 +190,12 @@
                         success: function (data, status) {
                             if (status === "success") {
                                 $table.bootstrapTable('refresh'); //确保前端界面与数据库一
+                                $insert.prop('disabled', false);
                             }
                         },
                         error: function () {
                             $table.bootstrapTable('refresh'); //确保前端界面与数据库一
+                            $insert.prop('disabled', false);
                             alert('编辑失败');
                         },
                         complete: function () {
@@ -269,7 +271,7 @@
                             }, {
                                 field: 'operate',
                                 title: 'Operate',
-                                colspan: 3,
+                                colspan: 2,
                                 align: 'center',
                                 valign: 'middle'
                             }],
@@ -332,7 +334,9 @@
                                 align: 'center',
                                 events: deleteEvents,
                                 formatter: deleteFormatter
-                            }, {}]
+                            }
+//                            , {}
+                        ]
                     ]
                 });
                 $table.on('check.bs.table uncheck.bs.table ' +
@@ -373,6 +377,7 @@
                 $insert.click(function () {
                     var data = {'id': null};
                     $table.bootstrapTable('prepend', data);
+                    $insert.prop('disabled', true);
                 });
             }
 
@@ -387,3 +392,7 @@
         <a href="logout">登出</a>
     </body>
 </html>
+
+
+
+

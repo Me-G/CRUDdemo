@@ -19,4 +19,10 @@ public interface WebsiteMapper {
     
     public void deleteWebsiteById(Integer id);
     
+    public void dropColumnID();
+    
+    public void addColumnID();
+    
 }
+
+

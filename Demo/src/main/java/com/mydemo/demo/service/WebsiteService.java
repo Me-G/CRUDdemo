@@ -36,4 +36,20 @@ public class WebsiteService {
         websiteMapper.deleteWebsiteById(id);
     }
     
+    public void dropColumnID(){
+        websiteMapper.dropColumnID();
+    }
+    
+    public void addColumnID(){
+        websiteMapper.addColumnID();
+    }
+    
+    public void resetID(){
+        websiteMapper.dropColumnID();
+        websiteMapper.addColumnID();
+    }
+    
 }
+
+
+

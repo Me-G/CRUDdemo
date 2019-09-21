@@ -75,6 +75,7 @@ public class WebsiteController {
                 websiteService.deleteWebsiteById(Integer.parseInt(id));
             }
         }
+        websiteService.resetID();
         return true;
     }
 
@@ -138,11 +139,3 @@ public class WebsiteController {
     }
 
 }
-
-
-
-
-
-
-
-
