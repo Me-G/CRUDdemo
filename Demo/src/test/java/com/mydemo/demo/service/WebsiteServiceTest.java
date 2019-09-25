@@ -41,6 +41,17 @@ public class WebsiteServiceTest {
         Website result = websiteService.getWebsiteById(1);
         System.out.println(result);
     }
+    
+    /**
+     * Test of getWebsiteById method, of class WebsiteService.
+     */
+    @Test
+    @Transactional
+    public void testGetWebsiteByIdBetween() {
+        System.out.println("------getWebsiteByIdBetween------");
+        List<Website> result = websiteService.getWebsiteByIdBetween(2, 7);
+        System.out.println(result);
+    }
 
     /**
      * Test of deleteWebsiteById method, of class WebsiteService.
@@ -105,6 +116,8 @@ public class WebsiteServiceTest {
     }
 
 }
+
+
 
 
 

@@ -44,30 +44,28 @@ public class WebsiteController {
 
     @RequestMapping(value = "/tableData", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public List<Website> tableData() {
+    public Map<String, Object> tableData() {
         List<Website> websites = websiteService.getAllWebsites();
-        return websites;
+        int total = websites.size();
+//        websites = websiteService.getWebsiteByIdBetween(1, 10);
+        Map<String, Object> result = new HashMap<>();
+        result.put("total", total);
+        result.put("rows", websites);
+        return result;
     }
+
 //    @RequestMapping(value = "/tableData", produces = "application/json;charset=UTF-8")
 //    @ResponseBody
-//    public Map<String, Object> tableData() {
+//    public List<Website> tableData() {
 //        List<Website> websites = websiteService.getAllWebsites();
-//        Map<String, Object> result = new HashMap<>();
-//        result.put("total", websites.size());
-//        result.put("rows", websites);
-//        return result;
+//        return websites;
 //    }
-
     @RequestMapping(value = "/updateORinsert", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Website updateORinsert(@RequestBody Website website) {
         if (website.getId() == 0) {
             System.out.println(website);
-//            if (website.getName() != null || website.getRemark() != null || website.getRemark() != null) {
             websiteService.insertWebsite(website);
-//            } else {
-//                return null;
-//            }
         } else {
             websiteService.updateWebsite(website);
         }
@@ -87,6 +85,36 @@ public class WebsiteController {
         }
         websiteService.resetID();
         return true;
+    }
+
+    @RequestMapping(value = "/getPageData", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> getPageData(@RequestBody String[] message) {
+        List<Website> websites = websiteService.getAllWebsites();
+        int total = websites.size();
+        if (message.length == 2) {
+            if (message[0] != null && message[1] != null) {
+                int number = Integer.parseInt(message[0]);
+                int size = Integer.parseInt(message[1]);
+                int start = (number - 1) * size + 1;
+                int end = total;
+                if (start <= total) {
+                    if (number * size <= total) {
+                        end = number * size;
+                    } else {
+                        end = total;
+                    }
+                }
+                websites = websiteService.getWebsiteByIdBetween(start, end);
+            }else{
+                websites = websiteService.getWebsiteByIdBetween(1, 10);
+            }
+
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("total", total);
+        result.put("rows", websites);
+        return result;
     }
 
     @RequestMapping(value = "/tableView", method = RequestMethod.POST)
@@ -111,14 +139,18 @@ public class WebsiteController {
     }
 
     @RequestMapping(value = "/insertWebsite", method = RequestMethod.POST)
-    public ModelAndView insertWebsite(ModelAndView mv, @ModelAttribute("insertWeb") Website website) {
+    public ModelAndView insertWebsite(ModelAndView mv,
+            @ModelAttribute("insertWeb") Website website
+    ) {
         websiteService.insertWebsite(website);
         mv.setViewName("redirect:/operation");
         return mv;
     }
 
     @RequestMapping(value = "/updateEdit/{id}")
-    public ModelAndView updateEdit(ModelAndView mv, @PathVariable("id") Integer id) {
+    public ModelAndView updateEdit(ModelAndView mv,
+            @PathVariable("id") Integer id
+    ) {
         Website editWeb = websiteService.getWebsiteById(id);
         mv.addObject("editWeb", editWeb);
         mv.setViewName("updateEdit");
@@ -126,7 +158,8 @@ public class WebsiteController {
     }
 
     @RequestMapping(value = "/updateWebsite", method = RequestMethod.PUT)
-    public ModelAndView updateWebsite(@ModelAttribute("updateWeb") Website website) {
+    public ModelAndView updateWebsite(@ModelAttribute("updateWeb") Website website
+    ) {
         ModelAndView mv = new ModelAndView();
         websiteService.updateWebsite(website);
         mv.setViewName("redirect:/operation");
@@ -134,7 +167,8 @@ public class WebsiteController {
     }
 
     @RequestMapping(value = "/deleteWebsite/{id}", method = RequestMethod.DELETE)
-    public ModelAndView deleteWebsite(@PathVariable("id") Integer id) {
+    public ModelAndView deleteWebsite(@PathVariable("id") Integer id
+    ) {
         ModelAndView mv = new ModelAndView();
         websiteService.deleteWebsiteById(id);
         mv.setViewName("redirect:/operation");
@@ -142,9 +176,4 @@ public class WebsiteController {
     }
 
 }
-
-
-
-
-
 

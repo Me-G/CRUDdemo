@@ -116,14 +116,16 @@
             <button id="insert" class="btn btn-danger">
                 <i class="fas fa-plus"></i> 插入
             </button>
+            <!--<input type="text" name="search_text" class="float-right search" placeholder="搜索">-->
         </div>
-<!--        <div class="float-right search btn-group">
-        </div>-->
+        <!--<div class="form-group">-->
+        <!--<input type="text" name="search_text" class="float-right search form-control" placeholder="搜索"/>-->
+        <!--</div>-->
         <table
             id="table"
             data-toggle="table"
             data-toolbar="#toolbar"
-            data-search="true"
+            data-search="false"
             data-show-refresh="true"
             data-show-toggle="true"
             data-show-fullscreen="true"
@@ -157,6 +159,7 @@
             }
 
             function responseHandler(res) {
+//                alert("res:" + JSON.stringify(res));
                 $.each(res.rows, function (i, row) {
                     row.state = $.inArray(row.id, selections) !== -1;
                 });
@@ -170,6 +173,37 @@
                 });
                 return html.join('');
             }
+            //分页数据
+            function getData(number, size) {
+                var message = [number, size];
+                $.ajax({
+                    type: "POST",
+                    url: "getPageData",
+                    contentType: "text/xml;charset=utf-8",
+                    /* 特别需要注意这里，需要现将json数组通过JSON.stringify()处理一下之后，才能作为我们需要的参数传过去*/
+                    data: JSON.stringify(message),
+                    traditional: true,
+                    dataType: 'json',
+//                        message: function () {
+//                            alert('data: ' + JSON.stringify(row));
+//                        },
+                    success: function (data) {
+                        alert('data: ' + JSON.stringify(data));
+                        $table.bootstrapTable('load', data);
+                    },
+                    error: function () {
+                        alert('失败');
+                    }
+                });
+            }
+
+//            function pageChange() {
+//                $table.on('page-change.bs.table', function (e, number, size) {
+//                    getData(number, size);
+//                });
+//                var options = $table.bootstrapTable('getOptions');
+//                getData(options.pageNumber, options.pageSize);
+//            }
 
             //保存图标
             function saveFormatter(value, row, index) {
@@ -244,25 +278,46 @@
                     locale: $('#locale').val(),
                     clickToSelect: true, //是否启用点击选中行
                     ajax: function (request) {
-                        $.ajax({//contentType是传输过去的时候的数据类型，dataType是接收服务器的时候的数据类型
-                            type: "GET",
-                            url: "tableData",
-                            contentType: "application/json;charset=utf-8",
-                            dataType: "json",
-                            success: function (msg) {
-                                msg = {
-                                    "total": msg.length, //总页数
-                                    "rows": msg   //数据
-                                };
+                        var options = $table.bootstrapTable('getOptions');
+                        var message = [options.pageNumber, options.pageSize];
+                        $.ajax({
+                            type: "POST",
+                            url: "getPageData",
+                            contentType: "text/xml;charset=utf-8",
+                            /* 特别需要注意这里，需要现将json数组通过JSON.stringify()处理一下之后，才能作为我们需要的参数传过去*/
+                            data: JSON.stringify(message),
+                            traditional: true,
+                            dataType: 'json',
+//                        message: function () {
+//                            alert('data: ' + JSON.stringify(row));
+//                        },
+                            success: function (data) {
+                                alert('data: ' + JSON.stringify(data));
                                 request.success({
-                                    row: msg
+                                    row: data
                                 });
-                                $table.bootstrapTable('load', msg);
+                                $table.bootstrapTable('load', data);
                             },
                             error: function () {
-                                alert("错误");
+                                alert('失败');
                             }
                         });
+//                        $.ajax({//contentType是传输过去的时候的数据类型，dataType是接收服务器的时候的数据类型
+//                            type: "GET",
+//                            url: "tableData",
+//                            contentType: "application/json;charset=utf-8",
+//                            dataType: "json",
+//                            success: function (msg) {
+////                                alert("msg1:" + JSON.stringify(msg));
+//                                request.success({
+//                                    row: msg
+//                                });
+//                                $table.bootstrapTable('load', msg);
+//                            },
+//                            error: function () {
+//                                alert("错误");
+//                            }
+//                        });
                     },
                     columns: [
                         [{
@@ -356,6 +411,11 @@
                 $table.on('all.bs.table', function (e, name, args) {
                     console.log(name, args);
                 });
+                $table.on('page-change.bs.table', function (e, number, size) {
+                    var options = $table.bootstrapTable('getOptions');
+                    getData(options.pageNumber, options.pageSize);
+//                    getData(number, size);
+                });
                 //删除多行
                 $remove.click(function () {
                     var ids = getIdSelections();
@@ -386,7 +446,7 @@
                     $insert.prop('disabled', true);
                 });
                 //搜索
-                $('.search').on('changed.bs.select',function(e){
+                $('.search').on('changed.bs.select', function (e) {
                     alert("搜索");
                 });
             }
@@ -402,6 +462,89 @@
         <a href="logout">登出</a>
     </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -33,7 +33,16 @@ public class WebsiteService {
         return website;
     }
 
-    ;
+    public List<Website> getWebsiteByIdBetween(Integer start,Integer end) {
+        //通过criteria构造查询条件
+        WebsiteExample websiteExample = new WebsiteExample();
+//        websiteExample.setOrderByClause("id asc"); //asc升序,desc降序排列
+        websiteExample.setDistinct(false); //去除重复,true是选择不重复记录,false反之
+        websiteExample.or().andIdBetween(start, end);
+        //自定义查询条件可能返回多条记录,使用List接收
+        List<Website> websites = websiteMapper.selectByExample(websiteExample);
+        return websites;
+    }
     
     public int insertWebsite(Website website) {
         int result = websiteMapper.insertSelective(website);
@@ -67,6 +76,7 @@ public class WebsiteService {
         return result;
     }
 }
+
 
 
 
