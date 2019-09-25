@@ -117,6 +117,8 @@
                 <i class="fas fa-plus"></i> 插入
             </button>
         </div>
+<!--        <div class="float-right search btn-group">
+        </div>-->
         <table
             id="table"
             data-toggle="table"
@@ -131,12 +133,12 @@
             data-click-to-select="true"
             data-detail-formatter="detailFormatter"
             data-minimum-count-columns="2"
+            data-id-field="id"
+            data-show-footer="false"
             data-show-pagination-switch="true"
             data-pagination="true"
-            data-id-field="id"
+            data-side-pagination="server"       
             data-page-list="[10, 25, 50, 100, all]"
-            data-show-footer="false"
-            data-side-pagination="server"
             data-cache="false" 
             data-response-handler="responseHandler">
         </table>
@@ -146,6 +148,7 @@
             var $table = $('#table');
             var $remove = $('#remove');
             var $insert = $('#insert');
+//            var $search = $('#search');
             var selections = [];
             function getIdSelections() {
                 return $.map($table.bootstrapTable('getSelections'), function (row) {
@@ -167,7 +170,7 @@
                 });
                 return html.join('');
             }
-            
+
             //保存图标
             function saveFormatter(value, row, index) {
                 return [
@@ -190,15 +193,15 @@
                         success: function (data, status) {
                             if (status === "success") {
                                 $table.bootstrapTable('refresh'); //确保前端界面与数据库一
-                                $insert.prop('disabled', false);
                             }
                         },
                         error: function () {
                             $table.bootstrapTable('refresh'); //确保前端界面与数据库一
-                            $insert.prop('disabled', false);
                             alert('编辑失败');
                         },
                         complete: function () {
+                            $insert.prop('disabled', false);
+                            $remove.prop('disabled', true);
                         }
                     });
                 }
@@ -247,6 +250,10 @@
                             contentType: "application/json;charset=utf-8",
                             dataType: "json",
                             success: function (msg) {
+                                msg = {
+                                    "total": msg.length, //总页数
+                                    "rows": msg   //数据
+                                };
                                 request.success({
                                     row: msg
                                 });
@@ -335,7 +342,6 @@
                                 events: deleteEvents,
                                 formatter: deleteFormatter
                             }
-//                            , {}
                         ]
                     ]
                 });
@@ -375,9 +381,13 @@
                 });
                 //插入按钮
                 $insert.click(function () {
-                    var data = {'id': null};
+                    var data = {'id': 0};
                     $table.bootstrapTable('prepend', data);
                     $insert.prop('disabled', true);
+                });
+                //搜索
+                $('.search').on('changed.bs.select',function(e){
+                    alert("搜索");
                 });
             }
 
@@ -392,6 +402,7 @@
         <a href="logout">登出</a>
     </body>
 </html>
+
 
 
 

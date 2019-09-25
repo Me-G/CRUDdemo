@@ -1,11 +1,13 @@
 package com.mydemo.demo.controller;
 
-import com.mydemo.demo.bean.Website;
+import com.mydemo.demo.model.Website;
 import com.mydemo.demo.service.WebsiteService;
 import java.io.IOException;
+import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.List;
+import java.util.Map;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -32,7 +34,6 @@ public class WebsiteController {
     private static final Logger logger = LoggerFactory.getLogger(WebsiteController.class);
 
     @RequestMapping("/operation")
-//    @ResponseBody
     public ModelAndView queryAll(ModelAndView mv) {
         logger.info("=========>未登录");
         List<Website> websites = websiteService.getAllWebsites();
@@ -47,17 +48,26 @@ public class WebsiteController {
         List<Website> websites = websiteService.getAllWebsites();
         return websites;
     }
+//    @RequestMapping(value = "/tableData", produces = "application/json;charset=UTF-8")
+//    @ResponseBody
+//    public Map<String, Object> tableData() {
+//        List<Website> websites = websiteService.getAllWebsites();
+//        Map<String, Object> result = new HashMap<>();
+//        result.put("total", websites.size());
+//        result.put("rows", websites);
+//        return result;
+//    }
 
     @RequestMapping(value = "/updateORinsert", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Website updateORinsert(@RequestBody Website website) {
-        System.out.println(website);
         if (website.getId() == 0) {
-            if (website.getName() != null || website.getRemark() != null || website.getRemark() != null) {
-                websiteService.insertWebsite(website);
-            } else {
-                return null;
-            }
+            System.out.println(website);
+//            if (website.getName() != null || website.getRemark() != null || website.getRemark() != null) {
+            websiteService.insertWebsite(website);
+//            } else {
+//                return null;
+//            }
         } else {
             websiteService.updateWebsite(website);
         }
@@ -79,13 +89,6 @@ public class WebsiteController {
         return true;
     }
 
-    @RequestMapping(value = "/bootstraptable", method = RequestMethod.GET)
-    public ModelAndView bootstraptable(ModelAndView mv) {
-        mv.setViewName("bootstraptable");
-//        mv.addObject("allwebsitesjson", websites);
-        return mv;
-    }
-
     @RequestMapping(value = "/tableView", method = RequestMethod.POST)
     public ModelAndView tableView(@ModelAttribute("username") String username,
             @ModelAttribute("password") String password) throws IOException {
@@ -103,7 +106,7 @@ public class WebsiteController {
             }
         }
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("redirect:/bootstraptable");
+        mv.setViewName("bootstraptable");
         return mv;
     }
 
@@ -139,3 +142,9 @@ public class WebsiteController {
     }
 
 }
+
+
+
+
+
+

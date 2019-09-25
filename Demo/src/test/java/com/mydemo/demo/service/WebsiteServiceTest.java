@@ -1,6 +1,6 @@
 package com.mydemo.demo.service;
 
-import com.mydemo.demo.bean.Website;
+import com.mydemo.demo.model.Website;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,12 +19,14 @@ public class WebsiteServiceTest {
 
     @Autowired
     private WebsiteService websiteService;
+
     /**
      * Test of getAllWebsites method, of class WebsiteService.
      */
     @Test
+    @Transactional
     public void testGetAllWebsites() {
-        System.out.println("getAllWebsites");
+        System.out.println("------getAllWebsites------");
         List<Website> result = websiteService.getAllWebsites();
         System.out.println(result);
     }
@@ -33,22 +35,25 @@ public class WebsiteServiceTest {
      * Test of getWebsiteById method, of class WebsiteService.
      */
     @Test
+    @Transactional
     public void testGetWebsiteById() {
-        System.out.println("getWebsiteById");
+        System.out.println("------getWebsiteById------");
         Website result = websiteService.getWebsiteById(1);
         System.out.println(result);
     }
-    
+
     /**
      * Test of deleteWebsiteById method, of class WebsiteService.
      */
     @Test
     @Transactional
     public void testDeleteWebsiteById() {
-        System.out.println("deleteWebsiteById");
-        websiteService.deleteWebsiteById(6);
-        List<Website> result = websiteService.getAllWebsites();
+        System.out.println("------deleteWebsiteById------");
+        int result = websiteService.deleteWebsiteById(6);
         System.out.println(result);
+        
+        List<Website> websites = websiteService.getAllWebsites();
+        System.out.println(websites);
     }
 
     /**
@@ -57,14 +62,17 @@ public class WebsiteServiceTest {
     @Test
     @Transactional
     public void testInsertWebsite() {
-        System.out.println("insertWebsite");
-        Website website=new Website();
+        System.out.println("------insertWebsite------");
+        Website website = new Website();
+        website.setId(0);
         website.setName("test");
         website.setValue("testInsert");
         website.setRemark("testInsert");
-        websiteService.insertWebsite(website);
-        List<Website> result = websiteService.getAllWebsites();
+        int result = websiteService.insertWebsite(website);
         System.out.println(result);
+        
+        List<Website> websites = websiteService.getAllWebsites();
+        System.out.println(websites);
     }
 
     /**
@@ -73,10 +81,12 @@ public class WebsiteServiceTest {
     @Test
     @Transactional
     public void testUpdateWebsite() {
-        System.out.println("updateWebsite");
+        System.out.println("------updateWebsite------");
         Website website = websiteService.getWebsiteById(6);
         website.setRemark("remark");
-        websiteService.updateWebsite(website);
+        int result = websiteService.updateWebsite(website);
+        System.out.println(result);
+        
         System.out.println(website);
     }
 
@@ -84,11 +94,19 @@ public class WebsiteServiceTest {
      * Test of resetID method, of class WebsiteService.
      */
     @Test
+    @Transactional
     public void testResetID() {
-        System.out.println("resetID");
-        websiteService.resetID();
-        List<Website> result = websiteService.getAllWebsites();
+        System.out.println("------resetID------");
+        int result = websiteService.resetID();
         System.out.println(result);
+        
+        List<Website> websites = websiteService.getAllWebsites();
+        System.out.println(websites);
     }
-    
+
 }
+
+
+
+
+

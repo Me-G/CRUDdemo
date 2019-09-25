@@ -44,10 +44,10 @@ public class MyRealm extends AuthenticatingRealm {
         Object credential = "123456";
         //realmName：当前realm的name，调用父类的getName();方法即可
         String realName = getName();
-        System.out.println("MyRealm:username:1." + realName + ",2." + principal + ";password:" + credential);
         SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(principal, credential, realName);
 
         return simpleAuthenticationInfo;
     }
 
 }
+
