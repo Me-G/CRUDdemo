@@ -41,7 +41,7 @@ public class WebsiteServiceTest {
         Website result = websiteService.getWebsiteById(1);
         System.out.println(result);
     }
-    
+
     /**
      * Test of getWebsiteById method, of class WebsiteService.
      */
@@ -54,6 +54,28 @@ public class WebsiteServiceTest {
     }
 
     /**
+     * Test of getWebsiteByCondition method, of class WebsiteService.
+     */
+    @Test
+    @Transactional
+    public void testGetWebsiteByCondition() {
+        System.out.println("------getWebsiteByCondition------");
+        List<Website> result = websiteService.getWebsiteByCondition("2");
+        System.out.println(result);
+    }
+
+    /**
+     * Test of getWebsitePageByCondition method, of class WebsiteService.
+     */
+    @Test
+    @Transactional
+    public void testgetWebsitePageByCondition() {
+        System.out.println("------getWebsitePageByCondition------");
+        List<Website> result = websiteService.getWebsitePageByCondition(websiteService.getWebsiteByCondition("test"), 0, 30);
+        System.out.println(result);
+    }
+
+    /**
      * Test of deleteWebsiteById method, of class WebsiteService.
      */
     @Test
@@ -62,7 +84,7 @@ public class WebsiteServiceTest {
         System.out.println("------deleteWebsiteById------");
         int result = websiteService.deleteWebsiteById(6);
         System.out.println(result);
-        
+
         List<Website> websites = websiteService.getAllWebsites();
         System.out.println(websites);
     }
@@ -81,7 +103,7 @@ public class WebsiteServiceTest {
         website.setRemark("testInsert");
         int result = websiteService.insertWebsite(website);
         System.out.println(result);
-        
+
         List<Website> websites = websiteService.getAllWebsites();
         System.out.println(websites);
     }
@@ -97,7 +119,7 @@ public class WebsiteServiceTest {
         website.setRemark("remark");
         int result = websiteService.updateWebsite(website);
         System.out.println(result);
-        
+
         System.out.println(website);
     }
 
@@ -110,15 +132,12 @@ public class WebsiteServiceTest {
         System.out.println("------resetID------");
         int result = websiteService.resetID();
         System.out.println(result);
-        
+
         List<Website> websites = websiteService.getAllWebsites();
         System.out.println(websites);
     }
 
 }
-
-
-
 
 
 

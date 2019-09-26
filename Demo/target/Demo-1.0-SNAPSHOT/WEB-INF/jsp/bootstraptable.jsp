@@ -116,16 +116,12 @@
             <button id="insert" class="btn btn-danger">
                 <i class="fas fa-plus"></i> 插入
             </button>
-            <!--<input type="text" name="search_text" class="float-right search" placeholder="搜索">-->
         </div>
-        <!--<div class="form-group">-->
-        <!--<input type="text" name="search_text" class="float-right search form-control" placeholder="搜索"/>-->
-        <!--</div>-->
         <table
             id="table"
             data-toggle="table"
             data-toolbar="#toolbar"
-            data-search="false"
+            data-search="true"
             data-show-refresh="true"
             data-show-toggle="true"
             data-show-fullscreen="true"
@@ -150,7 +146,6 @@
             var $table = $('#table');
             var $remove = $('#remove');
             var $insert = $('#insert');
-//            var $search = $('#search');
             var selections = [];
             function getIdSelections() {
                 return $.map($table.bootstrapTable('getSelections'), function (row) {
@@ -173,22 +168,20 @@
                 });
                 return html.join('');
             }
-            //分页数据
-            function getData(number, size) {
-                var message = [number, size];
+
+            //搜索分页数据
+            function getSearchPageData(pageNumber, pageSize, searchText) {
+                var message = [pageNumber, pageSize, searchText];
                 $.ajax({
                     type: "POST",
-                    url: "getPageData",
+                    url: "getSearchPageData",
                     contentType: "text/xml;charset=utf-8",
                     /* 特别需要注意这里，需要现将json数组通过JSON.stringify()处理一下之后，才能作为我们需要的参数传过去*/
                     data: JSON.stringify(message),
                     traditional: true,
                     dataType: 'json',
-//                        message: function () {
-//                            alert('data: ' + JSON.stringify(row));
-//                        },
                     success: function (data) {
-                        alert('data: ' + JSON.stringify(data));
+//                        alert('data: ' + JSON.stringify(data));
                         $table.bootstrapTable('load', data);
                     },
                     error: function () {
@@ -196,14 +189,6 @@
                     }
                 });
             }
-
-//            function pageChange() {
-//                $table.on('page-change.bs.table', function (e, number, size) {
-//                    getData(number, size);
-//                });
-//                var options = $table.bootstrapTable('getOptions');
-//                getData(options.pageNumber, options.pageSize);
-//            }
 
             //保存图标
             function saveFormatter(value, row, index) {
@@ -278,21 +263,20 @@
                     locale: $('#locale').val(),
                     clickToSelect: true, //是否启用点击选中行
                     ajax: function (request) {
+                        var searchText = $(" input[ type='text' ] ").val();
+                        alert("搜索" + searchText);
                         var options = $table.bootstrapTable('getOptions');
-                        var message = [options.pageNumber, options.pageSize];
+                        var message = [options.pageNumber, options.pageSize, searchText];
                         $.ajax({
                             type: "POST",
-                            url: "getPageData",
+                            url: "getSearchPageData",
                             contentType: "text/xml;charset=utf-8",
                             /* 特别需要注意这里，需要现将json数组通过JSON.stringify()处理一下之后，才能作为我们需要的参数传过去*/
                             data: JSON.stringify(message),
                             traditional: true,
                             dataType: 'json',
-//                        message: function () {
-//                            alert('data: ' + JSON.stringify(row));
-//                        },
                             success: function (data) {
-                                alert('data: ' + JSON.stringify(data));
+//                                alert('data: ' + JSON.stringify(data));
                                 request.success({
                                     row: data
                                 });
@@ -411,10 +395,12 @@
                 $table.on('all.bs.table', function (e, name, args) {
                     console.log(name, args);
                 });
-                $table.on('page-change.bs.table', function (e, number, size) {
+                //搜索分页
+                $table.on('page-change.bs.table' + 'search.bs.table', function (e, number, size) {
+                    var searchText = $(" input[ type='text' ] ").val();
+//                    alert("搜索" + searchText);
                     var options = $table.bootstrapTable('getOptions');
-                    getData(options.pageNumber, options.pageSize);
-//                    getData(number, size);
+                    getSearchPageData(options.pageNumber, options.pageSize, searchText);
                 });
                 //删除多行
                 $remove.click(function () {
@@ -445,10 +431,6 @@
                     $table.bootstrapTable('prepend', data);
                     $insert.prop('disabled', true);
                 });
-                //搜索
-                $('.search').on('changed.bs.select', function (e) {
-                    alert("搜索");
-                });
             }
 
             $(function () {
@@ -462,6 +444,58 @@
         <a href="logout">登出</a>
     </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

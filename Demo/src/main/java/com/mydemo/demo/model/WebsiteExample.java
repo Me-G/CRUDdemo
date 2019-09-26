@@ -103,6 +103,12 @@ public class WebsiteExample {
             }
             criteria.add(new Criterion(condition, value1, value2));
         }
+        
+        //andIdLike
+        public Criteria andIdLike(String value) {
+            addCriterion("id like", value, "id");
+            return (Criteria) this;
+        }
 
         public Criteria andIdIsNull() {
             addCriterion("id is null");
@@ -468,3 +474,5 @@ public class WebsiteExample {
         }
     }
 }
+
+

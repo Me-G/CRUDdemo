@@ -47,19 +47,12 @@ public class WebsiteController {
     public Map<String, Object> tableData() {
         List<Website> websites = websiteService.getAllWebsites();
         int total = websites.size();
-//        websites = websiteService.getWebsiteByIdBetween(1, 10);
         Map<String, Object> result = new HashMap<>();
         result.put("total", total);
         result.put("rows", websites);
         return result;
     }
 
-//    @RequestMapping(value = "/tableData", produces = "application/json;charset=UTF-8")
-//    @ResponseBody
-//    public List<Website> tableData() {
-//        List<Website> websites = websiteService.getAllWebsites();
-//        return websites;
-//    }
     @RequestMapping(value = "/updateORinsert", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Website updateORinsert(@RequestBody Website website) {
@@ -87,29 +80,34 @@ public class WebsiteController {
         return true;
     }
 
-    @RequestMapping(value = "/getPageData", method = RequestMethod.POST)
+    @RequestMapping(value = "/getSearchPageData", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, Object> getPageData(@RequestBody String[] message) {
-        List<Website> websites = websiteService.getAllWebsites();
-        int total = websites.size();
-        if (message.length == 2) {
+    public Map<String, Object> getSearchPageData(@RequestBody String[] message) {
+        System.out.println("message[0]:" + message[0] + ",message[1]:" + message[1] + ",message[2]:" + message[2]);
+        List<Website> websites = null;
+        int total = 0;
+        if (message.length == 3) {
+            String condition = message[2];
+            websites = websiteService.getWebsiteByCondition(condition);
+            total = websites.size();
+            System.out.println("total:" + total + ",websites:" + websites);
+
             if (message[0] != null && message[1] != null) {
                 int number = Integer.parseInt(message[0]);
                 int size = Integer.parseInt(message[1]);
-                int start = (number - 1) * size + 1;
+                int start = (number - 1) * size;
                 int end = total;
                 if (start <= total) {
-                    if (number * size <= total) {
-                        end = number * size;
+                    if (number * size - 1 <= total) {
+                        end = number * size - 1;
                     } else {
                         end = total;
                     }
                 }
-                websites = websiteService.getWebsiteByIdBetween(start, end);
-            }else{
-                websites = websiteService.getWebsiteByIdBetween(1, 10);
+                websites = websiteService.getWebsitePageByCondition(websites, start, end);
+            } else {
+                websites = websiteService.getWebsitePageByCondition(websites, 0, 10);
             }
-
         }
         Map<String, Object> result = new HashMap<>();
         result.put("total", total);
@@ -117,6 +115,35 @@ public class WebsiteController {
         return result;
     }
 
+//    @RequestMapping(value = "/getPageData", method = RequestMethod.POST)
+//    @ResponseBody
+//    public Map<String, Object> getPageData(@RequestBody String[] message) {
+//        List<Website> websites = websiteService.getAllWebsites();
+//        int total = websites.size();
+//        if (message.length == 2) {
+//            if (message[0] != null && message[1] != null) {
+//                int number = Integer.parseInt(message[0]);
+//                int size = Integer.parseInt(message[1]);
+//                int start = (number - 1) * size + 1;
+//                int end = total;
+//                if (start <= total) {
+//                    if (number * size <= total) {
+//                        end = number * size;
+//                    } else {
+//                        end = total;
+//                    }
+//                }
+//                websites = websiteService.getWebsiteByIdBetween(start, end);
+//            } else {
+//                websites = websiteService.getWebsiteByIdBetween(1, 10);
+//            }
+//
+//        }
+//        Map<String, Object> result = new HashMap<>();
+//        result.put("total", total);
+//        result.put("rows", websites);
+//        return result;
+//    }
     @RequestMapping(value = "/tableView", method = RequestMethod.POST)
     public ModelAndView tableView(@ModelAttribute("username") String username,
             @ModelAttribute("password") String password) throws IOException {
@@ -176,4 +203,5 @@ public class WebsiteController {
     }
 
 }
+
 
