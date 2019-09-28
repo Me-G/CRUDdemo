@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -54,6 +55,7 @@ public class WebsiteController {
     }
 
     @RequestMapping(value = "/updateORinsert", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @RequiresRoles({"admin"})
     @ResponseBody
     public Website updateORinsert(@RequestBody Website website) {
         if (website.getId() == 0) {
@@ -66,6 +68,7 @@ public class WebsiteController {
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST, produces = "text/xml;charset=UTF-8")
+    @RequiresRoles({"admin"})
     @ResponseBody
     public Boolean delete(@RequestBody String[] ids) {
         if (ids.length == 0) {
@@ -148,7 +151,7 @@ public class WebsiteController {
     public ModelAndView tableView(@ModelAttribute("username") String username,
             @ModelAttribute("password") String password) throws IOException {
         logger.info("Log4j2=========>用户名" + username + "密码" + password);
-
+        ModelAndView mv = new ModelAndView();
         Subject subject = SecurityUtils.getSubject();
         if (!subject.isAuthenticated()) {
             UsernamePasswordToken token = new UsernamePasswordToken(username, password);
@@ -156,12 +159,13 @@ public class WebsiteController {
             try {
                 subject.login(token);
                 System.out.println("登陆成功");
+                mv.setViewName("bootstraptable");
             } catch (AuthenticationException e) {
+                mv.setViewName("unauthorized");
+                mv.addObject("error", e.getMessage());
                 System.out.println("登陆失败：" + e.getMessage());
             }
         }
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("bootstraptable");
         return mv;
     }
 
@@ -202,6 +206,12 @@ public class WebsiteController {
         return mv;
     }
 
-}
+    @RequestMapping(value = "/logout")
+    public ModelAndView logout(ModelAndView mv) {
+        Subject currentUser = SecurityUtils.getSubject();
+        currentUser.logout();
+        return mv;
+    }
 
+}
 

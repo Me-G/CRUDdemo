@@ -41,32 +41,36 @@
     
     <!--shiro配置-->
     <!-- security datasource: -->
-    <bean id="myRealm" class="com.mydemo.demo.realm.MyRealm">
-        <!--
+    <bean id="shiroRealm" class="com.mydemo.demo.realm.ShiroRealm">
+        
         <property name="credentialsMatcher" >
             <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <!--指定加密方法-->
                 <property name="hashAlgorithmName" value="MD5"></property>
+                <!--指定加密次数-->
+                <property name="hashIterations" value="2"></property>
             </bean>
         </property>
-        -->
+        
     </bean>
     
      <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
         <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
-        <property name="realm" ref="myRealm"></property>
+        <property name="realm" ref="shiroRealm"></property>
     </bean>
     
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager"></property>
         <property name="loginUrl" value="/" ></property> 
-            <property name="successUrl" value="/operation"></property>
+        <property name="successUrl" value="/bootstraptable"></property>
         <property name="unauthorizedUrl" value="/unauthorized"></property>
         <property name="filterChainDefinitions">
             <value>
                 # some example chain definitions:
                 #/admin/** = authc, roles[admin]
                 #/docs/** = authc, perms[document:read]
-                /bootstraptable = authc
+                /bootstraptable = authc, roles[user]
+                #/tableView = authc
                 /logout = logout
                 #/** = authc
                 / = anon
@@ -84,6 +88,11 @@
     </bean>
 
 </beans>
+
+
+
+
+
 
 
 

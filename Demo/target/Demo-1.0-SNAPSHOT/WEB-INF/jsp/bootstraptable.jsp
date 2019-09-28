@@ -3,7 +3,7 @@
     Created on : 2019年9月15日, 下午3:53:42
     Author     : ME
 --%>
-
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -52,6 +52,10 @@
                 font-style: normal;
             }
         </style>
+
+        <script>
+            var hasOperatingDepart = false;
+        </script>
 
     </head>
 
@@ -109,13 +113,19 @@
         </div>
 
         <div id="toolbar">
-            <button id="remove" class="btn btn-danger" disabled>
-                <i class="glyphicon glyphicon-remove"></i> Delete
-            </button>
+            <shiro:hasRole name="admin">
+                <button id="remove" class="btn btn-danger" disabled>
+                    <i class="glyphicon glyphicon-remove"></i> 删除
+                </button>
 
-            <button id="insert" class="btn btn-danger">
-                <i class="fas fa-plus"></i> 插入
-            </button>
+                <button id="insert" class="btn btn-danger">
+                    <i class="fas fa-plus"></i> 插入
+                </button>
+
+                <script>
+                    hasOperatingDepart = true;
+                </script>
+            </shiro:hasRole>
         </div>
         <table
             id="table"
@@ -154,7 +164,7 @@
             }
 
             function responseHandler(res) {
-//                alert("res:" + JSON.stringify(res));
+                //                alert("res:" + JSON.stringify(res));
                 $.each(res.rows, function (i, row) {
                     row.state = $.inArray(row.id, selections) !== -1;
                 });
@@ -192,9 +202,13 @@
 
             //保存图标
             function saveFormatter(value, row, index) {
-                return [
-                    '<a id="save" href="javascript:void(0)" class="save" title="Save"><i class="far fa-save"></i></a>'
-                ].join("");
+                if (hasOperatingDepart) {
+                    return [
+                        '<a id="save" href="javascript:void(0)" class="save" title="Save"><i class="far fa-save"></i></a>'
+                    ].join("");
+                } else {
+                    return null;
+                }
             }
             //更新或者插入数据
             window.saveEvents = {
@@ -227,9 +241,13 @@
             };
             //删除图标
             function deleteFormatter(value, row, index) {
-                return [
-                    '<a id="delete" class="delete" href="javascript:void(0)" title="Delete"><i class="fa fa-trash"></i></a>'
-                ].join("");
+                if (hasOperatingDepart) {
+                    return [
+                        '<a id="delete" class="delete" href="javascript:void(0)" title="Delete"><i class="fa fa-trash"></i></a>'
+                    ].join("");
+                } else {
+                    return null;
+                }
             }
             //删除数据
             window.deleteEvents = {
@@ -264,7 +282,7 @@
                     clickToSelect: true, //是否启用点击选中行
                     ajax: function (request) {
                         var searchText = $(" input[ type='text' ] ").val();
-                        alert("搜索" + searchText);
+                        //                        alert("搜索" + searchText);
                         var options = $table.bootstrapTable('getOptions');
                         var message = [options.pageNumber, options.pageSize, searchText];
                         $.ajax({
@@ -441,140 +459,9 @@
         </script>
 
 
-        <a href="logout">登出</a>
+        <a href="logout">退出</a>
     </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
