@@ -97,7 +97,7 @@ public class WebsiteController {
                 }
                 websites = websiteService.getWebsitePage(websites, start, end);
             } else {
-                websites = websiteService.getWebsitePage(websites, 0, 10);
+                websites = websiteService.getWebsitePage(websites, 0, 9);
             }
         }
         Map<String, Object> result = new HashMap<>();
@@ -136,3 +136,4 @@ public class WebsiteController {
     }
 
 }
+
