@@ -16,7 +16,6 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,39 +33,22 @@ public class WebsiteController {
     WebsiteService websiteService;
     private static final Logger logger = LoggerFactory.getLogger(WebsiteController.class);
 
-    @RequestMapping("/operation")
-    public ModelAndView queryAll(ModelAndView mv) {
-        logger.info("=========>未登录");
-        List<Website> websites = websiteService.getAllWebsites();
-        mv.setViewName("operation");
-        mv.addObject("allwebsites", websites);
-        return mv;
-    }
-
-    @RequestMapping(value = "/tableData", produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public Map<String, Object> tableData() {
-        List<Website> websites = websiteService.getAllWebsites();
-        int total = websites.size();
-        Map<String, Object> result = new HashMap<>();
-        result.put("total", total);
-        result.put("rows", websites);
-        return result;
-    }
-
+    //插入或更新数据
     @RequestMapping(value = "/updateORinsert", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @RequiresRoles({"admin"})
     @ResponseBody
     public Website updateORinsert(@RequestBody Website website) {
+        //通过id判断是插入还是更新,id=0插入，id！=0更新
         if (website.getId() == 0) {
-            System.out.println(website);
+            logger.info("Log4j2===>Insert:"+website);
             websiteService.insertWebsite(website);
         } else {
+            logger.info("Log4j2===>Update:"+website);
             websiteService.updateWebsite(website);
         }
         return website;
     }
-
+    //删除操作
     @RequestMapping(value = "/delete", method = RequestMethod.POST, produces = "text/xml;charset=UTF-8")
     @RequiresRoles({"admin"})
     @ResponseBody
@@ -75,26 +57,32 @@ public class WebsiteController {
             return false;
         } else {
             for (String id : ids) {
-                System.out.println(Integer.parseInt(id));
+                logger.info("Log4j2===>Delete:"+id);
                 websiteService.deleteWebsiteById(Integer.parseInt(id));
             }
         }
         websiteService.resetID();
         return true;
     }
-
+    /**
+     * 返回查询结果
+     * @param message
+     * message[0]:页面
+     * message[1]:页面大小
+     * message[2]:查询条件
+     * @return 
+     */
     @RequestMapping(value = "/getSearchPageData", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> getSearchPageData(@RequestBody String[] message) {
-        System.out.println("message[0]:" + message[0] + ",message[1]:" + message[1] + ",message[2]:" + message[2]);
         List<Website> websites = null;
         int total = 0;
         if (message.length == 3) {
+            //通过条件查询数据
             String condition = message[2];
             websites = websiteService.getWebsiteByCondition(condition);
             total = websites.size();
-            System.out.println("total:" + total + ",websites:" + websites);
-
+//            System.out.println("total:" + total + ",websites:" + websites);
             if (message[0] != null && message[1] != null) {
                 int number = Integer.parseInt(message[0]);
                 int size = Integer.parseInt(message[1]);
@@ -107,9 +95,9 @@ public class WebsiteController {
                         end = total;
                     }
                 }
-                websites = websiteService.getWebsitePageByCondition(websites, start, end);
+                websites = websiteService.getWebsitePage(websites, start, end);
             } else {
-                websites = websiteService.getWebsitePageByCondition(websites, 0, 10);
+                websites = websiteService.getWebsitePage(websites, 0, 9);
             }
         }
         Map<String, Object> result = new HashMap<>();
@@ -117,40 +105,11 @@ public class WebsiteController {
         result.put("rows", websites);
         return result;
     }
-
-//    @RequestMapping(value = "/getPageData", method = RequestMethod.POST)
-//    @ResponseBody
-//    public Map<String, Object> getPageData(@RequestBody String[] message) {
-//        List<Website> websites = websiteService.getAllWebsites();
-//        int total = websites.size();
-//        if (message.length == 2) {
-//            if (message[0] != null && message[1] != null) {
-//                int number = Integer.parseInt(message[0]);
-//                int size = Integer.parseInt(message[1]);
-//                int start = (number - 1) * size + 1;
-//                int end = total;
-//                if (start <= total) {
-//                    if (number * size <= total) {
-//                        end = number * size;
-//                    } else {
-//                        end = total;
-//                    }
-//                }
-//                websites = websiteService.getWebsiteByIdBetween(start, end);
-//            } else {
-//                websites = websiteService.getWebsiteByIdBetween(1, 10);
-//            }
-//
-//        }
-//        Map<String, Object> result = new HashMap<>();
-//        result.put("total", total);
-//        result.put("rows", websites);
-//        return result;
-//    }
+    //用户验证
     @RequestMapping(value = "/tableView", method = RequestMethod.POST)
     public ModelAndView tableView(@ModelAttribute("username") String username,
             @ModelAttribute("password") String password) throws IOException {
-        logger.info("Log4j2=========>用户名" + username + "密码" + password);
+        logger.info("Log4j2===>用户名" + username);
         ModelAndView mv = new ModelAndView();
         Subject subject = SecurityUtils.getSubject();
         if (!subject.isAuthenticated()) {
@@ -158,54 +117,17 @@ public class WebsiteController {
             token.setRememberMe(true);
             try {
                 subject.login(token);
-                System.out.println("登陆成功");
+                logger.info("Log4j2===>登陆成功");
                 mv.setViewName("bootstraptable");
             } catch (AuthenticationException e) {
                 mv.setViewName("unauthorized");
-                mv.addObject("error", e.getMessage());
-                System.out.println("登陆失败：" + e.getMessage());
+                logger.info("Log4j2===>登陆失败：" + e.getMessage());
             }
         }
         return mv;
     }
 
-    @RequestMapping(value = "/insertWebsite", method = RequestMethod.POST)
-    public ModelAndView insertWebsite(ModelAndView mv,
-            @ModelAttribute("insertWeb") Website website
-    ) {
-        websiteService.insertWebsite(website);
-        mv.setViewName("redirect:/operation");
-        return mv;
-    }
-
-    @RequestMapping(value = "/updateEdit/{id}")
-    public ModelAndView updateEdit(ModelAndView mv,
-            @PathVariable("id") Integer id
-    ) {
-        Website editWeb = websiteService.getWebsiteById(id);
-        mv.addObject("editWeb", editWeb);
-        mv.setViewName("updateEdit");
-        return mv;
-    }
-
-    @RequestMapping(value = "/updateWebsite", method = RequestMethod.PUT)
-    public ModelAndView updateWebsite(@ModelAttribute("updateWeb") Website website
-    ) {
-        ModelAndView mv = new ModelAndView();
-        websiteService.updateWebsite(website);
-        mv.setViewName("redirect:/operation");
-        return mv;
-    }
-
-    @RequestMapping(value = "/deleteWebsite/{id}", method = RequestMethod.DELETE)
-    public ModelAndView deleteWebsite(@PathVariable("id") Integer id
-    ) {
-        ModelAndView mv = new ModelAndView();
-        websiteService.deleteWebsiteById(id);
-        mv.setViewName("redirect:/operation");
-        return mv;
-    }
-
+    //退出
     @RequestMapping(value = "/logout")
     public ModelAndView logout(ModelAndView mv) {
         Subject currentUser = SecurityUtils.getSubject();

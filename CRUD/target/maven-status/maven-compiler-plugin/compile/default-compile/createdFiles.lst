@@ -1,0 +1,10 @@
+com\mydemo\demo\controller\WebsiteController.class
+com\mydemo\demo\model\WebsiteExample$GeneratedCriteria.class
+com\mydemo\demo\service\WebsiteService.class
+META-INF\spring.components
+com\mydemo\demo\dao\WebsiteMapper.class
+com\mydemo\demo\model\WebsiteExample$Criterion.class
+com\mydemo\demo\model\WebsiteExample.class
+com\mydemo\demo\realm\ShiroRealm.class
+com\mydemo\demo\model\WebsiteExample$Criteria.class
+com\mydemo\demo\model\Website.class

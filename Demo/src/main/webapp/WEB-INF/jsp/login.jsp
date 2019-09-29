@@ -9,16 +9,11 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Login Page</title>
     </head>
     <body>
-
-        <h1>Hello World!</h1>
-        <a href="operation">操作页面</a><br/>
-        <a href="bootstraptable">BootStrap Table</a>
-
+        <h1>登陆页面</h1>
         <br/><br/>
-        <h1>Hello World!</h1><br/>
         <form:form action="tableView" method="POST">
             用户名:<input type="text" name="username"/><br/>
             密码:<input type="password" name="password"/><br/>
@@ -26,6 +21,9 @@
         </form:form>
     </body>
 </html>
+
+
+
 
 
 

@@ -27,7 +27,6 @@
 
         <!--对于Bootstrap v4，使用Font Awesome作为默认图标，因此需要导入Font Awesome链接。-->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-        <%--4、页面Js文件的引用<script src="${pageContext.request.contextPath}/myData.js"></script>--%>
 
 
         <title>Hello, Bootstrap Table!</title>
@@ -164,7 +163,6 @@
             }
 
             function responseHandler(res) {
-                //                alert("res:" + JSON.stringify(res));
                 $.each(res.rows, function (i, row) {
                     row.state = $.inArray(row.id, selections) !== -1;
                 });
@@ -281,8 +279,7 @@
                     locale: $('#locale').val(),
                     clickToSelect: true, //是否启用点击选中行
                     ajax: function (request) {
-                        var searchText = $(" input[ type='text' ] ").val();
-                        //                        alert("搜索" + searchText);
+                        var searchText = $(" input[ type='text' ] ").val();//获取搜索框的值
                         var options = $table.bootstrapTable('getOptions');
                         var message = [options.pageNumber, options.pageSize, searchText];
                         $.ajax({
@@ -294,7 +291,6 @@
                             traditional: true,
                             dataType: 'json',
                             success: function (data) {
-//                                alert('data: ' + JSON.stringify(data));
                                 request.success({
                                     row: data
                                 });
@@ -304,22 +300,6 @@
                                 alert('失败');
                             }
                         });
-//                        $.ajax({//contentType是传输过去的时候的数据类型，dataType是接收服务器的时候的数据类型
-//                            type: "GET",
-//                            url: "tableData",
-//                            contentType: "application/json;charset=utf-8",
-//                            dataType: "json",
-//                            success: function (msg) {
-////                                alert("msg1:" + JSON.stringify(msg));
-//                                request.success({
-//                                    row: msg
-//                                });
-//                                $table.bootstrapTable('load', msg);
-//                            },
-//                            error: function () {
-//                                alert("错误");
-//                            }
-//                        });
                     },
                     columns: [
                         [{
@@ -416,7 +396,6 @@
                 //搜索分页
                 $table.on('page-change.bs.table' + 'search.bs.table', function (e, number, size) {
                     var searchText = $(" input[ type='text' ] ").val();
-//                    alert("搜索" + searchText);
                     var options = $table.bootstrapTable('getOptions');
                     getSearchPageData(options.pageNumber, options.pageSize, searchText);
                 });
@@ -458,16 +437,6 @@
 
         </script>
 
-
         <a href="logout">退出</a>
     </body>
 </html>
-
-
-
-
-
-
-
-
-

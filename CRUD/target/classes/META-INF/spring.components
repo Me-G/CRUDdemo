@@ -1,0 +1,4 @@
+#
+#Sat Sep 28 23:34:08 CST 2019
+com.mydemo.demo.service.WebsiteService=org.springframework.stereotype.Component
+com.mydemo.demo.controller.WebsiteController=org.springframework.stereotype.Component

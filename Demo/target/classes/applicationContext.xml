@@ -66,15 +66,10 @@
         <property name="unauthorizedUrl" value="/unauthorized"></property>
         <property name="filterChainDefinitions">
             <value>
-                # some example chain definitions:
-                #/admin/** = authc, roles[admin]
-                #/docs/** = authc, perms[document:read]
                 /bootstraptable = authc, roles[user]
-                #/tableView = authc
                 /logout = logout
                 #/** = authc
                 / = anon
-                # more URL-to-FilterChain definitions here
             </value>
         </property>
     </bean>
@@ -88,12 +83,3 @@
     </bean>
 
 </beans>
-
-
-
-
-
-
-
-
-

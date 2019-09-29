@@ -48,7 +48,7 @@ public class ShiroRealm extends AuthorizingRealm {
         //principal:认证的实体信息，可以是username，也可以是数据表对应的用户的实体对象类
         Object principal = username;
         //credential：密码
-        Object credential = null;//"4280d89a5a03f812751f504cc10ee8a5";
+        Object credential = null;
         if ("admin".equals(username)) {
             credential = "928bfd2577490322a6e19b793691467e";
         } else if ("user".equals(username)) {
@@ -94,5 +94,3 @@ public class ShiroRealm extends AuthorizingRealm {
     }
 
 }
-
-

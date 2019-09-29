@@ -23,7 +23,7 @@
                 控制台只输出level及以上级别的信息(onMatch),其他的直接拒绝(onMismatch)
                 日志的级别： ALL< Trace < DEBUG < INFO < WARN < ERROR < FATAL < OFF。
             -->
-            <ThresholdFilter level="TRACE" onMatch="ACCEPT"
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT"
                              onMismatch="DENY" />
             <!-- PatternLayout 日志输出格式模板：
                 %d{yyyy-MM-dd HH:mm:ss.SSS} 日志生成时间。
