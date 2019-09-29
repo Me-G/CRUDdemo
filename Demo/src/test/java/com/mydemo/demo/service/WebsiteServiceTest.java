@@ -65,13 +65,13 @@ public class WebsiteServiceTest {
     }
 
     /**
-     * Test of getWebsitePageByCondition method, of class WebsiteService.
+     * Test of getWebsitePage method, of class WebsiteService.
      */
     @Test
     @Transactional
-    public void testgetWebsitePageByCondition() {
-        System.out.println("------getWebsitePageByCondition------");
-        List<Website> result = websiteService.getWebsitePageByCondition(websiteService.getWebsiteByCondition("test"), 0, 30);
+    public void testGetWebsitePage() {
+        System.out.println("------getWebsitePage------");
+        List<Website> result = websiteService.getWebsitePage(websiteService.getWebsiteByCondition("test"), 0, 30);
         System.out.println(result);
     }
 
@@ -138,6 +138,8 @@ public class WebsiteServiceTest {
     }
 
 }
+
+
 
 
 

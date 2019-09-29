@@ -62,8 +62,8 @@ public class WebsiteService {
         List<Website> websites = websiteMapper.selectByExample(websiteExample);
         return websites;
     }
-
-    public List<Website> getWebsitePageByCondition(List<Website> websites, Integer start, Integer end) {
+    //返回页面数据
+    public List<Website> getWebsitePage(List<Website> websites, Integer start, Integer end) {
         List<Website> result = new ArrayList<>();
         System.out.println(websites.size());
         for (int i = 0; i < websites.size(); i++) {
@@ -115,6 +115,7 @@ public class WebsiteService {
         return result;
     }
 }
+
 
 
 
