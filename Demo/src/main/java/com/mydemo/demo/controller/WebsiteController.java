@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,6 +35,7 @@ public class WebsiteController {
 
     //插入或更新数据
     @RequestMapping(value = "/updateORinsert", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @RequiresRoles({"admin"})
     @ResponseBody
     public Website updateORinsert(@RequestBody Website website) {
         //通过id判断是插入还是更新,id=0插入，id！=0更新
@@ -48,6 +50,7 @@ public class WebsiteController {
     }
     //删除操作
     @RequestMapping(value = "/delete", method = RequestMethod.POST, produces = "text/xml;charset=UTF-8")
+    @RequiresRoles({"admin"})
     @ResponseBody
     public Boolean delete(@RequestBody String[] ids) {
         if (ids.length == 0) {
@@ -106,82 +109,31 @@ public class WebsiteController {
     @RequestMapping(value = "/tableView", method = RequestMethod.POST)
     public ModelAndView tableView(@ModelAttribute("username") String username,
             @ModelAttribute("password") String password) throws IOException {
-<<<<<<< HEAD
         logger.info("Log4j2===>用户名" + username);
         ModelAndView mv = new ModelAndView();
-=======
-        logger.info("Log4j2=========>用户名" + username + "密码" + password);
-
->>>>>>> parent of ec3be1d... SSM+Log4j2+Bootstrap+Ajax+Junit5+Shiro
         Subject subject = SecurityUtils.getSubject();
         if (!subject.isAuthenticated()) {
             UsernamePasswordToken token = new UsernamePasswordToken(username, password);
             token.setRememberMe(true);
             try {
                 subject.login(token);
-<<<<<<< HEAD
                 logger.info("Log4j2===>登陆成功");
                 mv.setViewName("bootstraptable");
             } catch (AuthenticationException e) {
                 mv.setViewName("unauthorized");
                 logger.info("Log4j2===>登陆失败：" + e.getMessage());
-=======
-                System.out.println("登陆成功");
-            } catch (AuthenticationException e) {
-                System.out.println("登陆失败：" + e.getMessage());
->>>>>>> parent of ec3be1d... SSM+Log4j2+Bootstrap+Ajax+Junit5+Shiro
             }
         }
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("bootstraptable");
         return mv;
     }
 
-<<<<<<< HEAD
     //退出
     @RequestMapping(value = "/logout")
     public ModelAndView logout(ModelAndView mv) {
         Subject currentUser = SecurityUtils.getSubject();
         currentUser.logout();
-=======
-    @RequestMapping(value = "/insertWebsite", method = RequestMethod.POST)
-    public ModelAndView insertWebsite(ModelAndView mv,
-            @ModelAttribute("insertWeb") Website website
-    ) {
-        websiteService.insertWebsite(website);
-        mv.setViewName("redirect:/operation");
-        return mv;
-    }
-
-    @RequestMapping(value = "/updateEdit/{id}")
-    public ModelAndView updateEdit(ModelAndView mv,
-            @PathVariable("id") Integer id
-    ) {
-        Website editWeb = websiteService.getWebsiteById(id);
-        mv.addObject("editWeb", editWeb);
-        mv.setViewName("updateEdit");
-        return mv;
-    }
-
-    @RequestMapping(value = "/updateWebsite", method = RequestMethod.PUT)
-    public ModelAndView updateWebsite(@ModelAttribute("updateWeb") Website website
-    ) {
-        ModelAndView mv = new ModelAndView();
-        websiteService.updateWebsite(website);
-        mv.setViewName("redirect:/operation");
-        return mv;
-    }
-
-    @RequestMapping(value = "/deleteWebsite/{id}", method = RequestMethod.DELETE)
-    public ModelAndView deleteWebsite(@PathVariable("id") Integer id
-    ) {
-        ModelAndView mv = new ModelAndView();
-        websiteService.deleteWebsiteById(id);
-        mv.setViewName("redirect:/operation");
->>>>>>> parent of ec3be1d... SSM+Log4j2+Bootstrap+Ajax+Junit5+Shiro
         return mv;
     }
 
 }
-
 

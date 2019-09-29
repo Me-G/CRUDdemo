@@ -1,5 +1,7 @@
 package com.mydemo.demo.realm;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -7,13 +9,18 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.realm.AuthenticatingRealm;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 
 /**
  *
  * @author ME
  */
-public class MyRealm extends AuthenticatingRealm {
+public class ShiroRealm extends AuthorizingRealm {
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
@@ -41,7 +48,6 @@ public class MyRealm extends AuthenticatingRealm {
         //principal:认证的实体信息，可以是username，也可以是数据表对应的用户的实体对象类
         Object principal = username;
         //credential：密码
-<<<<<<< HEAD:Demo/src/main/java/com/mydemo/demo/realm/ShiroRealm.java
         Object credential = null;
         if ("admin".equals(username)) {
             credential = "928bfd2577490322a6e19b793691467e";
@@ -50,18 +56,41 @@ public class MyRealm extends AuthenticatingRealm {
         } else {
             throw new UnknownAccountException("用户不存在！");
         }
-=======
-        Object credential = "123456";
->>>>>>> parent of ec3be1d... SSM+Log4j2+Bootstrap+Ajax+Junit5+Shiro:Demo/src/main/java/com/mydemo/demo/realm/MyRealm.java
         //realmName：当前realm的name，调用父类的getName();方法即可
         String realName = getName();
-        SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(principal, credential, realName);
+        //credentialsSalt:盐值
+        ByteSource credentialsSalt = ByteSource.Util.bytes(username);
+
+        SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(principal, credential, credentialsSalt, realName);
 
         return simpleAuthenticationInfo;
     }
 
-}
-<<<<<<< HEAD:Demo/src/main/java/com/mydemo/demo/realm/ShiroRealm.java
-=======
+    public static void main(String[] args) {
+        String algorithmName = "MD5";
+        Object credential = "123456";
+        Object salt = ByteSource.Util.bytes("user");
+        int hashIterations = 2;
+        Object result = new SimpleHash(algorithmName, credential, salt, hashIterations);
+        System.out.println(result);
+    }
 
->>>>>>> parent of ec3be1d... SSM+Log4j2+Bootstrap+Ajax+Junit5+Shiro:Demo/src/main/java/com/mydemo/demo/realm/MyRealm.java
+    //授权方法
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection pc) {
+        System.out.println("doGetAuthorizationInfo...");
+        //1.从PrincipalCollection中获取登录用户信息
+        Object principal = pc.getPrimaryPrincipal();
+        //2.利用登录用户的信息来获取当前用户的角色或权限（可能需要查询数据库）
+        Set<String> roles = new HashSet<>();
+        roles.add("user");
+        if ("admin".equals(principal)) {
+            roles.add("admin");
+        }
+        //3.创建SimpleAuthorizationInfo，并设置其roles属性
+        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo(roles);
+        //4.返回SimpleAuthorizationInfo对象
+        return simpleAuthorizationInfo;
+    }
+
+}
