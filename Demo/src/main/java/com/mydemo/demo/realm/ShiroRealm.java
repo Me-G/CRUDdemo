@@ -66,14 +66,14 @@ public class ShiroRealm extends AuthorizingRealm {
         return simpleAuthenticationInfo;
     }
 
-    public static void main(String[] args) {
-        String algorithmName = "MD5";
-        Object credential = "123456";
-        Object salt = ByteSource.Util.bytes("user");
-        int hashIterations = 2;
-        Object result = new SimpleHash(algorithmName, credential, salt, hashIterations);
-        System.out.println(result);
-    }
+//    public static void main(String[] args) {
+//        String algorithmName = "MD5";
+//        Object credential = "123456";
+//        Object salt = ByteSource.Util.bytes("user");
+//        int hashIterations = 2;
+//        Object result = new SimpleHash(algorithmName, credential, salt, hashIterations);
+//        System.out.println(result);
+//    }
 
     //授权方法
     @Override
@@ -94,3 +94,4 @@ public class ShiroRealm extends AuthorizingRealm {
     }
 
 }
+

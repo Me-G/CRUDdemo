@@ -82,7 +82,7 @@ public class WebsiteServiceTest {
     @Transactional
     public void testDeleteWebsiteById() {
         System.out.println("------deleteWebsiteById------");
-        int result = websiteService.deleteWebsiteById(6);
+        int result = websiteService.deleteWebsiteById(1);
         System.out.println(result);
 
         List<Website> websites = websiteService.getAllWebsites();
@@ -115,7 +115,7 @@ public class WebsiteServiceTest {
     @Transactional
     public void testUpdateWebsite() {
         System.out.println("------updateWebsite------");
-        Website website = websiteService.getWebsiteById(6);
+        Website website = websiteService.getWebsiteById(2);
         website.setRemark("remark");
         int result = websiteService.updateWebsite(website);
         System.out.println(result);
@@ -138,9 +138,4 @@ public class WebsiteServiceTest {
     }
 
 }
-
-
-
-
-
 

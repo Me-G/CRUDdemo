@@ -74,7 +74,7 @@
             distinct
         </if>
         <include refid="Base_Column_List" />
-        from weiyidata
+        from website
         <if test="_parameter != null">
             <include refid="Example_Where_Clause" />
         </if>
@@ -85,27 +85,27 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select 
         <include refid="Base_Column_List" />
-        from weiyidata
+        from website
         where id = #{id,jdbcType=INTEGER}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-        delete from weiyidata
+        delete from website
         where id = #{id,jdbcType=INTEGER}
     </delete>
     <delete id="deleteByExample" parameterType="com.mydemo.demo.model.WebsiteExample">
-        delete from weiyidata
+        delete from website
         <if test="_parameter != null">
             <include refid="Example_Where_Clause" />
         </if>
     </delete>
     <insert id="insert" parameterType="com.mydemo.demo.model.Website">
-        insert into weiyidata (id, name, value, 
+        insert into website (id, name, value, 
         remark)
         values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, 
         #{remark,jdbcType=VARCHAR})
     </insert>
     <insert id="insertSelective" parameterType="com.mydemo.demo.model.Website">
-        insert into weiyidata
+        insert into website
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
@@ -136,13 +136,13 @@
         </trim>
     </insert>
     <select id="countByExample" parameterType="com.mydemo.demo.model.WebsiteExample" resultType="java.lang.Long">
-        select count(*) from weiyidata
+        select count(*) from website
         <if test="_parameter != null">
             <include refid="Example_Where_Clause" />
         </if>
     </select>
     <update id="updateByExampleSelective" parameterType="map">
-        update weiyidata
+        update website
         <set>
             <if test="record.id != null">
                 id = #{record.id,jdbcType=INTEGER},
@@ -162,7 +162,7 @@
         </if>
     </update>
     <update id="updateByExample" parameterType="map">
-        update weiyidata
+        update website
         set id = #{record.id,jdbcType=INTEGER},
         name = #{record.name,jdbcType=VARCHAR},
         value = #{record.value,jdbcType=VARCHAR},
@@ -172,7 +172,7 @@
         </if>
     </update>
     <update id="updateByPrimaryKeySelective" parameterType="com.mydemo.demo.model.Website">
-        update weiyidata
+        update website
         <set>
             <if test="name != null">
                 name = #{name,jdbcType=VARCHAR},
@@ -187,7 +187,7 @@
         where id = #{id,jdbcType=INTEGER}
     </update>
     <update id="updateByPrimaryKey" parameterType="com.mydemo.demo.model.Website">
-        update weiyidata
+        update website
         set name = #{name,jdbcType=VARCHAR},
         value = #{value,jdbcType=VARCHAR},
         remark = #{remark,jdbcType=VARCHAR}
@@ -196,9 +196,9 @@
   
     <!--重置序列-->
     <update id="dropColumnID">
-        alter table weiyidata drop id
+        alter table website drop id
     </update>
     <update id="addColumnID">
-        alter table weiyidata add id int unsigned not null auto_increment first,add primary key (id)
+        alter table website add id int unsigned not null auto_increment first,add primary key (id)
     </update>
 </mapper>
