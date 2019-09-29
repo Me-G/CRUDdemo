@@ -1,4 +1,8 @@
 #
+<<<<<<< HEAD
 #Sun Sep 29 17:50:56 CST 2019
+=======
+#Thu Sep 26 21:31:54 CST 2019
+>>>>>>> parent of ec3be1d... SSM+Log4j2+Bootstrap+Ajax+Junit5+Shiro
 com.mydemo.demo.service.WebsiteService=org.springframework.stereotype.Component
 com.mydemo.demo.controller.WebsiteController=org.springframework.stereotype.Component

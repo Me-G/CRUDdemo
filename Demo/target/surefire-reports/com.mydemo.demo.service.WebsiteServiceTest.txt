@@ -1,4 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.mydemo.demo.service.WebsiteServiceTest
 -------------------------------------------------------------------------------
+<<<<<<< HEAD
 Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 14.882 s - in com.mydemo.demo.service.WebsiteServiceTest
+=======
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.455 s - in com.mydemo.demo.service.WebsiteServiceTest
+>>>>>>> parent of ec3be1d... SSM+Log4j2+Bootstrap+Ajax+Junit5+Shiro

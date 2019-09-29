@@ -8,11 +8,10 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="refresh" content="0; url=/Demo">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Unauthorized Page</title>
     </head>
     <body>
-        <h1>Unauthorized!</h1>
+        <h1>Hello World!</h1>
     </body>
 </html>
